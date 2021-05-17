@@ -2,8 +2,8 @@ import random
 import unittest
 import networkx as nx
 from paths_graph import PathsGraph
-from paths_graph.path_checker import PathChecker, HypothesisTester
-from paths_graph.path_checker.ltl_nodes import build_tree 
+from path_checker import PathChecker, HypothesisTester
+from path_checker.ltl_nodes import build_tree 
 
 
 def test_parse_formula_atomic():
