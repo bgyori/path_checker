@@ -198,14 +198,34 @@ class NotNode(Node):
         else:
             return None
 
+
 class AtomicNode(Node):
     def __init__(self, node_id):
         super(AtomicNode, self).__init__()
         self.node_id = node_id
 
     def update(self, x, is_last=False):
+        # This is the simple case where there is an exact match
         if x == self.node_id:
             self.truth = True
+        # This is a special case where we have a prefix match
+        elif self.node_id.endswith(':') and x.startswith(self.node_id):
+            self.truth = True
+        # This is another special case where we're dealing with a high-level
+        # term
+        elif self.node_id.startswith('CATEGORY'):
+            from indra.databases.hgnc_client import is_kinase, is_phosphatase, \
+                is_transcription_factor, get_hgnc_name
+            cat = self.node_id.split(':')[1]
+            gene_name = get_hgnc_name(x.split(':')[1])
+            if cat == 'kinase':
+                self.truth = is_kinase(gene_name)
+            elif cat == 'phosphatase':
+                self.truth = is_phosphatase(gene_name)
+            elif cat == 'tf':
+                self.truth = is_transcription_factor(gene_name)
+            else:
+                self.truth = False
         else:
             self.truth = False
         self.is_last = is_last

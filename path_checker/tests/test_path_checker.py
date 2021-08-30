@@ -180,3 +180,22 @@ def test_path_hypothesis_checking_online():
     assert hyp == 0
 
 
+def test_path_checker_grounded_entity():
+    pc = PathChecker('F([FPLX:ERK])')
+    tf = pc.update('FPLX:MEK', True)
+    assert tf is False, tf
+
+    pc = PathChecker('F([FPLX:ERK])')
+    tf = pc.update('FPLX:ERK', False)
+    assert tf is True, tf
+
+    pc = PathChecker('F([FPLX:])')
+    tf = pc.update('FPLX:ERK', False)
+    assert tf is True, tf
+
+    pc = PathChecker('F([CATEGORY:kinase])')
+    tf = pc.update('HGNC:391', True)
+    assert tf is True, tf
+    pc = PathChecker('F([CATEGORY:tf])')
+    tf = pc.update('HGNC:391', True)
+    assert tf is False, tf
